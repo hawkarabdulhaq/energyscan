@@ -56,7 +56,12 @@ def home_page():
     st.markdown("**Course by Hawkar Ali Abdulhaq**")
     st.markdown("🌐 [www.habdulhaq.com](https://www.habdulhaq.com)")
     st.markdown("📧 [connect@habdulhaq.com](mailto:connect@habdulhaq.com)")
-    st.image("https://via.placeholder.com/800x200?text=Maximize+Your+Potential", use_container_width=True)
+
+    # Display personal image
+    try:
+        st.image("data/personal.jpg", use_container_width=True, caption="Scan Your Energy Performance Lab")
+    except FileNotFoundError:
+        st.warning("Image not found. Please ensure `data/personal.jpg` exists.")
 
 # Initialize Session State for Page Navigation
 if "current_page" not in st.session_state:

@@ -10,7 +10,7 @@ JSON_FILE = "data/awareness.json"
 GITHUB_API_URL_JSON = f"https://api.github.com/repos/{GITHUB_USER}/{GITHUB_REPO}/contents/{JSON_FILE}"
 
 def get_github_pat():
-    """Retrieve GitHub PAT from Streamlit secrets."""
+    """Retrieve GitHub PAT from Streamlit secrets or notify the user."""
     try:
         return st.secrets["github_pat"]
     except KeyError:
@@ -38,7 +38,7 @@ def load_existing_data():
         return []
 
 def save_results_to_github(data):
-    """Save results directly to the GitHub repository."""
+    """Save results to the GitHub repository."""
     github_pat = get_github_pat()
     if not github_pat:
         return

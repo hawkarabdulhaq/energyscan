@@ -4,7 +4,7 @@ import requests
 import base64
 
 # Constants for GitHub integration
-GITHUB_USER = "habdulhaq87"
+GITHUB_USER = "hawkarabdulhaq"
 GITHUB_REPO = "energyscan"
 JSON_FILE = "data/awareness.json"
 GITHUB_API_URL_JSON = f"https://api.github.com/repos/{GITHUB_USER}/{GITHUB_REPO}/contents/{JSON_FILE}"

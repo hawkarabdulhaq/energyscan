@@ -139,4 +139,14 @@ def awareness_test():
         score += responses["q4"]
         strategy_scores = {"A. Adjust tasks to match energy levels.": 4, 
                            "B. Take a short break or recharge.": 3, 
-                          
+                           "C. Push through regardless.": 2, 
+                           "D. Delay tasks until later.": 1}
+        score += sum(strategy_scores[strategy] for strategy in responses["q5"])
+        score += 4 if responses["q6"] == "Yes" else 2
+        score += responses["q7"]
+        score += 4 if responses["q8"] == "Yes" else 2
+        score += responses["q9"]
+
+        # Save Results
+        save_results_to_file({"score": score, "responses": responses})
+        st.success("Your results have been saved successfully!")

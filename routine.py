@@ -112,7 +112,7 @@ def routine_test():
         "How often do you stick to your daily schedule?",
         min_value=1,
         max_value=5,
-        value=st.session_state["routine_responses"]["q2"],
+        value=st.session_state.get("routine_responses", {}).get("q2", 3),
         format="Level %d",
         key="routine_q2"
     )
@@ -123,7 +123,7 @@ def routine_test():
         "How quickly do you adapt to unexpected changes in your routine?",
         min_value=1,
         max_value=5,
-        value=st.session_state["routine_responses"]["q3"],
+        value=st.session_state.get("routine_responses", {}).get("q3", 3),
         format="Level %d",
         key="routine_q3"
     )
@@ -148,7 +148,7 @@ def routine_test():
         "How consistent are you in taking short breaks during work hours?",
         min_value=1,
         max_value=5,
-        value=st.session_state["routine_responses"]["q6"],
+        value=st.session_state.get("routine_responses", {}).get("q6", 3),
         format="Level %d",
         key="routine_q6"
     )

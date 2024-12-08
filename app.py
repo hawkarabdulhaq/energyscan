@@ -10,23 +10,15 @@ def main():
     # Sidebar Header
     st.sidebar.title(APP_NAME)
     st.sidebar.markdown("---")
-    
-    # Sidebar Navigation with a persistent state
-    page = st.sidebar.radio(
-        "Navigate to:",
-        ["🏠 Home", "📋 Survey", "📊 Analyze", "📈 Results"],
-        index=0 if st.session_state["current_page"] == "Home" else 1 if st.session_state["current_page"] == "Survey" else 2 if st.session_state["current_page"] == "Analyze" else 3,
-        key="navigation"
-    )
 
-    # Update session state based on selection
-    if page == "🏠 Home":
+    # Sidebar Buttons for Navigation
+    if st.sidebar.button("🏠 Home"):
         st.session_state["current_page"] = "Home"
-    elif page == "📋 Survey":
+    if st.sidebar.button("📋 Survey"):
         st.session_state["current_page"] = "Survey"
-    elif page == "📊 Analyze":
+    if st.sidebar.button("📊 Analyze"):
         st.session_state["current_page"] = "Analyze"
-    elif page == "📈 Results":
+    if st.sidebar.button("📈 Results"):
         st.session_state["current_page"] = "Results"
 
     # Render the selected page

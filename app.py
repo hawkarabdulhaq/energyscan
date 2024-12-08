@@ -9,17 +9,21 @@ def main():
     st.sidebar.title(APP_NAME)
     st.sidebar.markdown("---")
     
-    # Sidebar Navigation
-    st.sidebar.markdown("### Navigate to:")
-    home_button = st.sidebar.button("🏠 Home")
-    survey_button = st.sidebar.button("📋 Survey")
+    # Sidebar Navigation with a persistent state
+    page = st.sidebar.radio(
+        "Navigate to:",
+        ["🏠 Home", "📋 Survey"],
+        index=0 if st.session_state["current_page"] == "Home" else 1,
+        key="navigation"
+    )
 
-    # Render Pages
-    if home_button or not st.session_state.get("current_page"):
-        st.session_state["current_page"] = "Home"
+    # Update session state based on selection
+    st.session_state["current_page"] = "Home" if page == "🏠 Home" else "Survey"
+
+    # Render the selected page
+    if st.session_state["current_page"] == "Home":
         home_page()
-    elif survey_button:
-        st.session_state["current_page"] = "Survey"
+    elif st.session_state["current_page"] == "Survey":
         display_questionary()
 
 def home_page():
@@ -37,10 +41,9 @@ def home_page():
     
     👉 Use the sidebar to navigate to the Survey and start your journey to optimizing energy performance!
     """)
-    # Optional: Add a call-to-action
     st.image("https://via.placeholder.com/800x200?text=Maximize+Your+Potential", use_column_width=True)
 
-# Maintain Session State
+# Initialize Session State for Page Navigation
 if "current_page" not in st.session_state:
     st.session_state["current_page"] = "Home"
 

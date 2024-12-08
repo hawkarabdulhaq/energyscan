@@ -48,12 +48,6 @@ def load_existing_data():
 def classify_wellbeing(responses):
     """Classify well-being based on survey responses."""
     response_scores = {
-        "q3": {
-            "A. Very consistent, I prioritize my physical well-being.": 4,
-            "B. Fairly consistent, but I occasionally slip.": 3,
-            "C. Inconsistent, I struggle to maintain a routine.": 2,
-            "D. Not consistent at all.": 1,
-        },
         "q5": {
             "Rarely, I manage my mental energy well.": 4,
             "Occasionally, but it’s manageable.": 3,
@@ -65,12 +59,12 @@ def classify_wellbeing(responses):
     score = 0
     score += 4 if responses["q1"] == "Yes" else 2
     score += 4 if responses["q2"] == "Yes" else 2
-    score += response_scores["q3"].get(responses["q3"], 0)
+    score += int(responses["q3"])  # q3 is an integer slider
     score += 4 if responses["q4"] == "Yes" else 2
     score += response_scores["q5"].get(responses["q5"], 0)
-    score += int(responses["q6"])  # q6 is a numeric slider
+    score += int(responses["q6"])  # q6 is an integer slider
     score += len(responses.get("q7", [])) * 2  # Handle multiselect as list
-    score += int(responses["q8"])  # q8 is a numeric slider
+    score += int(responses["q8"])  # q8 is an integer slider
     score += 4 if responses["q9"] == "Yes" else 2
 
     # Classify based on score
@@ -96,7 +90,7 @@ def analyze_responses(responses):
         good.append("You maintain a healthy balance between work and personal life.")
     if responses["q2"] == "Yes":
         good.append("You dedicate time daily for personal activities like hobbies or relaxation.")
-    if responses["q3"].startswith("A"):
+    if responses["q3"] >= 4:
         good.append("You are very consistent in maintaining a healthy lifestyle.")
     if responses["q4"] == "Yes":
         good.append("You practice mindfulness or stress-relief techniques regularly.")
@@ -116,7 +110,7 @@ def analyze_responses(responses):
         improvement.append("Work on creating a healthier balance between work and personal life.")
     if responses["q2"] == "No":
         improvement.append("Dedicate time daily for personal activities like hobbies or relaxation.")
-    if responses["q3"].startswith("D"):
+    if responses["q3"] <= 2:
         improvement.append("Focus on maintaining a more consistent healthy lifestyle.")
     if responses["q4"] == "No":
         improvement.append("Incorporate mindfulness or stress-relief techniques into your routine.")

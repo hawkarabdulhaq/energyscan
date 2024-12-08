@@ -9,6 +9,7 @@ GITHUB_REPO = "energyscan"
 JSON_FILE = "data/routine.json"
 GITHUB_API_URL_JSON = f"https://api.github.com/repos/{GITHUB_USER}/{GITHUB_REPO}/contents/{JSON_FILE}"
 
+
 def get_github_pat():
     """Retrieve GitHub PAT from Streamlit secrets."""
     try:
@@ -90,12 +91,17 @@ def routine_test():
     if "routine_responses" not in st.session_state:
         st.session_state["routine_responses"] = {
             "q1": None,
-            "q2": None,
+            "q2": 3,
             "q3": None,
             "q4": None,
+            "q5": [],
+            "q6": 3,
+            "q7": None,
+            "q8": "",
+            "q9": 3,
         }
 
-    # Question 1
+    # Section 1: Consistency in Habits
     st.subheader("1️⃣ Consistency in Habits")
     st.session_state["routine_responses"]["q1"] = st.radio(
         "How consistent are you in maintaining daily routines?",
@@ -109,44 +115,78 @@ def routine_test():
         key="routine_q1"
     )
 
-    # Question 2
-    st.session_state["routine_responses"]["q2"] = st.radio(
-        "How often do you review and adapt your habits based on changing circumstances?",
-        ["A. Regularly, I reflect and adjust proactively.",
-         "B. Occasionally, when I feel the need for improvement.",
-         "C. Rarely, I resist changing routines.",
-         "D. Never, I stick to the same habits regardless of outcomes."],
-        index={
-            "A": 0, "B": 1, "C": 2, "D": 3
-        }[st.session_state["routine_responses"]["q2"][0]] if st.session_state["routine_responses"]["q2"] else 0,
+    st.session_state["routine_responses"]["q2"] = st.slider(
+        "How frequently do you plan your daily schedule in advance?",
+        min_value=1,
+        max_value=5,
+        value=st.session_state["routine_responses"]["q2"],
+        format="Level %d (1 = Never, 5 = Always)",
         key="routine_q2"
     )
 
-    # Question 3
+    # Section 2: Resilience Under Pressure
     st.subheader("2️⃣ Resilience Under Pressure")
     st.session_state["routine_responses"]["q3"] = st.radio(
-        "When faced with unexpected challenges, how do you respond?",
-        ["A. I adjust quickly and stay focused on my goals.",
-         "B. I adapt eventually but feel stressed initially.",
-         "C. I struggle to find my footing and often feel overwhelmed.",
-         "D. I avoid addressing challenges and feel stuck."],
+        "How do you respond to unexpected challenges?",
+        ["A. Adapt quickly and find solutions.",
+         "B. Take time to adapt but recover.",
+         "C. Struggle to cope and feel overwhelmed.",
+         "D. Avoid challenges and feel stuck."],
         index={
             "A": 0, "B": 1, "C": 2, "D": 3
         }[st.session_state["routine_responses"]["q3"][0]] if st.session_state["routine_responses"]["q3"] else 0,
         key="routine_q3"
     )
 
-    # Question 4
-    st.session_state["routine_responses"]["q4"] = st.radio(
-        "How do you handle setbacks in your plans or goals?",
-        ["A. I reflect, learn, and create new plans quickly.",
-         "B. I recover eventually but dwell on the setback for some time.",
-         "C. I find it difficult to recover and lose momentum.",
-         "D. I often abandon goals after setbacks."],
-        index={
-            "A": 0, "B": 1, "C": 2, "D": 3
-        }[st.session_state["routine_responses"]["q4"][0]] if st.session_state["routine_responses"]["q4"] else 0,
+    st.session_state["routine_responses"]["q4"] = st.multiselect(
+        "What strategies do you use to manage setbacks in your plans?",
+        ["A. Reflect and adjust strategies.",
+         "B. Seek help or resources.",
+         "C. Take a break and return later.",
+         "D. Ignore the setback and move on."],
+        default=st.session_state["routine_responses"]["q4"],
         key="routine_q4"
+    )
+
+    # Section 3: Adaptability
+    st.subheader("3️⃣ Adaptability")
+    st.session_state["routine_responses"]["q5"] = st.text_input(
+        "What is your biggest challenge when adapting to new routines?",
+        value=st.session_state["routine_responses"]["q5"],
+        key="routine_q5"
+    )
+
+    st.session_state["routine_responses"]["q6"] = st.slider(
+        "How comfortable are you with changing habits to meet goals?",
+        min_value=1,
+        max_value=5,
+        value=st.session_state["routine_responses"]["q6"],
+        format="Level %d (1 = Uncomfortable, 5 = Very Comfortable)",
+        key="routine_q6"
+    )
+
+    # Section 4: Self-Care
+    st.subheader("4️⃣ Self-Care")
+    st.session_state["routine_responses"]["q7"] = st.radio(
+        "Do you prioritize self-care in your daily routine?",
+        ["Yes", "No"],
+        index=0 if st.session_state["routine_responses"]["q7"] == "Yes" else 1,
+        key="routine_q7"
+    )
+
+    st.session_state["routine_responses"]["q8"] = st.text_area(
+        "Describe one routine that helps you recharge during stressful times:",
+        value=st.session_state["routine_responses"]["q8"],
+        key="routine_q8"
+    )
+
+    st.session_state["routine_responses"]["q9"] = st.slider(
+        "How effective is your current routine in balancing work and personal life?",
+        min_value=1,
+        max_value=5,
+        value=st.session_state["routine_responses"]["q9"],
+        format="Level %d (1 = Poor, 5 = Excellent)",
+        key="routine_q9"
     )
 
     # Submit Button
@@ -154,9 +194,16 @@ def routine_test():
         responses = st.session_state["routine_responses"]
         score = 0
         score += {"A": 4, "B": 3, "C": 2, "D": 1}[responses["q1"][0]]
-        score += {"A": 4, "B": 3, "C": 2, "D": 1}[responses["q2"][0]]
+        score += responses["q2"]
         score += {"A": 4, "B": 3, "C": 2, "D": 1}[responses["q3"][0]]
-        score += {"A": 4, "B": 3, "C": 2, "D": 3}[responses["q4"][0]]
+        strategy_scores = {"A. Reflect and adjust strategies.": 4,
+                           "B. Seek help or resources.": 3,
+                           "C. Take a break and return later.": 2,
+                           "D. Ignore the setback and move on.": 1}
+        score += sum(strategy_scores[strategy] for strategy in responses["q4"])
+        score += responses["q6"]
+        score += 4 if responses["q7"] == "Yes" else 2
+        score += responses["q9"]
 
         save_results_to_github({"score": score, "responses": responses})
         st.success("Your results have been saved successfully!")

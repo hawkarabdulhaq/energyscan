@@ -34,5 +34,19 @@
             "q6": "Always",
             "q7": 3
         }
+    },
+    {
+        "score": 25,
+        "responses": {
+            "q1": "Always",
+            "q2": true,
+            "q3": 4,
+            "q4": "Yes",
+            "q5": [
+                "Complete tasks randomly without evaluation."
+            ],
+            "q6": "Often",
+            "q7": 5
+        }
     }
 ]

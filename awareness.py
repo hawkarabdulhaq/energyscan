@@ -17,8 +17,11 @@ def load_existing_data():
     if os.path.exists(LOCAL_FILE_PATH):
         try:
             with open(LOCAL_FILE_PATH, "r") as file:
-                data = json.load(file)
-                return data if isinstance(data, list) else []
+                data = file.read().strip()
+                if data:  # Check if the file has content
+                    return json.loads(data)
+                else:
+                    return []  # Return an empty list if the file is empty
         except (json.JSONDecodeError, ValueError) as e:
             st.error(f"Error reading existing data: {e}")
             return []

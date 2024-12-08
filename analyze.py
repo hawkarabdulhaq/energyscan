@@ -1,17 +1,23 @@
 import streamlit as st
 from analyze_awareness import display_analysis as analyze_awareness
+from analyze_routine import display_routine_analysis as analyze_routine
+
 
 def display_analysis():
     st.title("📊 Analysis Dashboard")
     st.markdown("""
     **Welcome to the Analysis Section!**  
     This dashboard provides insights into your energy performance based on the surveys you've completed.  
-    
-    Explore the tabs below for detailed analyses of each survey:
+    Use the tabs below to explore detailed analyses for each survey.
     """)
 
     # Tabs for analysis
-    tabs = st.tabs(["Awareness Analysis", "Routine Analysis (Coming Soon)", "Well-being Analysis (Coming Soon)", "Activities Analysis (Coming Soon)"])
+    tabs = st.tabs([
+        "Awareness Analysis",
+        "Routine Analysis",
+        "Well-being Analysis (Coming Soon)",
+        "Activities Analysis (Coming Soon)"
+    ])
 
     with tabs[0]:
         st.subheader("Awareness Analysis")
@@ -19,7 +25,7 @@ def display_analysis():
 
     with tabs[1]:
         st.subheader("Routine Analysis")
-        st.info("Routine analysis is currently under development. Stay tuned!")
+        analyze_routine()
 
     with tabs[2]:
         st.subheader("Well-being Analysis")

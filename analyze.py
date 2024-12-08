@@ -1,6 +1,7 @@
 import streamlit as st
 from analyze_awareness import display_analysis as analyze_awareness
 from analyze_routine import display_routine_analysis as analyze_routine
+from analyze_wellbeing import display_wellbeing_analysis as analyze_wellbeing
 
 
 def display_analysis():
@@ -15,7 +16,7 @@ def display_analysis():
     tabs = st.tabs([
         "Awareness Analysis",
         "Routine Analysis",
-        "Well-being Analysis (Coming Soon)",
+        "Well-being Analysis",
         "Activities Analysis (Coming Soon)"
     ])
 
@@ -29,7 +30,7 @@ def display_analysis():
 
     with tabs[2]:
         st.subheader("Well-being Analysis")
-        st.info("Well-being analysis is currently under development. Stay tuned!")
+        analyze_wellbeing()
 
     with tabs[3]:
         st.subheader("Activities Analysis")

@@ -1,46 +1,48 @@
 import streamlit as st
 from survey import display_questionary
 
+# App Settings
+APP_NAME = "Scan Your Energy Performance Lab"
+
 def main():
-    # App Configuration
-    st.set_page_config(
-        page_title="Energy Performance Lab",
-        page_icon="⚡",
-        layout="wide",
-    )
+    # Sidebar Header
+    st.sidebar.title(APP_NAME)
+    st.sidebar.markdown("---")
     
     # Sidebar Navigation
-    st.sidebar.title("⚡ Energy Performance Lab")
-    st.sidebar.markdown("---")
-    
-    st.sidebar.subheader("Navigation")
-    if st.sidebar.button("🏠 Home"):
+    st.sidebar.markdown("### Navigate to:")
+    home_button = st.sidebar.button("🏠 Home")
+    survey_button = st.sidebar.button("📋 Survey")
+
+    # Render Pages
+    if home_button or not st.session_state.get("current_page"):
+        st.session_state["current_page"] = "Home"
         home_page()
-    if st.sidebar.button("📋 Awareness"):
-        display_questionary(section="Awareness")
-    if st.sidebar.button("📋 Routine"):
-        display_questionary(section="Routine")
-    if st.sidebar.button("📋 Well-being"):
-        display_questionary(section="Well-being")
-    if st.sidebar.button("📋 Activities"):
-        display_questionary(section="Activities")
-    
-    st.sidebar.markdown("---")
-    st.sidebar.write("✨ Discover your energy potential!")
+    elif survey_button:
+        st.session_state["current_page"] = "Survey"
+        display_questionary()
 
 def home_page():
-    # Home Page Content
+    # App Title
     st.title("Welcome to Scan Your Energy Performance Lab")
+    
+    # App Description
     st.markdown("""
     🌟 **Discover Your Energy Performance**  
-    Unlock insights into your energy management and performance levels with our personalized questionary.  
-    - **Awareness**: Understand your peak energy times and patterns.  
-    - **Routine**: Build effective, resilient routines.  
-    - **Well-being**: Achieve balance in life and work.  
-    - **Activities**: Prioritize tasks for maximum impact.  
+    This test is designed to help you understand your energy patterns and performance levels.  
+    By answering carefully curated questions, you'll gain insights into:  
+    - How effectively you manage your energy.  
+    - Areas for improvement in your daily routines and habits.  
+    - Steps to enhance your productivity and well-being.  
     
-    🖱️ Use the buttons in the sidebar to explore each section of the questionary and start your journey!
+    👉 Use the sidebar to navigate to the Survey and start your journey to optimizing energy performance!
     """)
+    # Optional: Add a call-to-action
+    st.image("https://via.placeholder.com/800x200?text=Maximize+Your+Potential", use_column_width=True)
+
+# Maintain Session State
+if "current_page" not in st.session_state:
+    st.session_state["current_page"] = "Home"
 
 if __name__ == "__main__":
     main()

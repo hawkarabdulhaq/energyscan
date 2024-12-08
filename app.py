@@ -1,6 +1,7 @@
 import streamlit as st
 from survey import display_questionary
 from analyze import display_analysis
+from result import display_results
 
 # App Settings
 APP_NAME = "Scan Your Energy Performance Lab"
@@ -13,8 +14,8 @@ def main():
     # Sidebar Navigation with a persistent state
     page = st.sidebar.radio(
         "Navigate to:",
-        ["🏠 Home", "📋 Survey", "📊 Analyze"],
-        index=0 if st.session_state["current_page"] == "Home" else 1 if st.session_state["current_page"] == "Survey" else 2,
+        ["🏠 Home", "📋 Survey", "📊 Analyze", "📈 Results"],
+        index=0 if st.session_state["current_page"] == "Home" else 1 if st.session_state["current_page"] == "Survey" else 2 if st.session_state["current_page"] == "Analyze" else 3,
         key="navigation"
     )
 
@@ -25,6 +26,8 @@ def main():
         st.session_state["current_page"] = "Survey"
     elif page == "📊 Analyze":
         st.session_state["current_page"] = "Analyze"
+    elif page == "📈 Results":
+        st.session_state["current_page"] = "Results"
 
     # Render the selected page
     if st.session_state["current_page"] == "Home":
@@ -33,6 +36,8 @@ def main():
         display_questionary()
     elif st.session_state["current_page"] == "Analyze":
         display_analysis()
+    elif st.session_state["current_page"] == "Results":
+        display_results()
 
 def home_page():
     # App Title
@@ -47,9 +52,9 @@ def home_page():
     - Areas for improvement in your daily routines and habits.  
     - Steps to enhance your productivity and well-being.  
     
-    👉 Use the sidebar to navigate to the Survey or Analysis sections and start your journey to optimizing energy performance!
+    👉 Use the sidebar to navigate to the Survey, Analysis, or Results sections and start your journey to optimizing energy performance!
     """)
-    st.image("https://via.placeholder.com/800x200?text=Maximize+Your+Potential", use_column_width=True)
+    st.image("https://via.placeholder.com/800x200?text=Maximize+Your+Potential", use_container_width=True)
 
 # Initialize Session State for Page Navigation
 if "current_page" not in st.session_state:

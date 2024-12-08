@@ -10,6 +10,7 @@ GITHUB_REPO = "energyscan"
 JSON_FILE = "data/awareness.json"
 GITHUB_API_URL_JSON = f"https://api.github.com/repos/{GITHUB_USER}/{GITHUB_REPO}/contents/{JSON_FILE}"
 
+
 def get_github_pat():
     """Retrieve GitHub PAT from Streamlit secrets."""
     try:
@@ -17,6 +18,7 @@ def get_github_pat():
     except KeyError:
         st.error("GitHub PAT not found in secrets! Please add `github_pat` to your secrets.")
         return None
+
 
 def load_existing_data():
     """Load existing data from the GitHub repository."""
@@ -41,6 +43,7 @@ def load_existing_data():
     else:
         st.error(f"Failed to fetch data from GitHub. Error {response.status_code}: {response.text}")
         return []
+
 
 def classify_responses(responses):
     """Classify the user's approach to task prioritization based on responses."""
@@ -75,28 +78,54 @@ def classify_responses(responses):
 
     return classification, score
 
+
 def analyze_responses(responses):
-    """Analyze individual responses and identify areas for improvement."""
-    insights = []
+    """Analyze individual responses and identify strengths and areas for improvement."""
+    good = []
+    improvement = []
+
+    # Strengths
+    if responses["q1"] == "Yes":
+        good.append("You understand your natural energy highs and lows.")
+    if responses["q2"] >= 4:
+        good.append("You are good at predicting your peak energy times.")
+    if responses["q3"].startswith("A") or responses["q3"].startswith("B"):
+        good.append("You regularly reflect on your energy levels.")
+    if responses["q4"] >= 4:
+        good.append("You effectively schedule demanding tasks during your peak energy hours.")
+    if "A. Adjust tasks to match energy levels." in responses["q5"] or "B. Take a short break or recharge." in responses["q5"]:
+        good.append("You use effective strategies for managing low-energy periods.")
+    if responses["q6"] == "Yes":
+        good.append("You maintain a consistent sleep schedule.")
+    if responses["q7"] >= 4:
+        good.append("You take regular breaks during work hours.")
+    if responses["q8"] == "Yes":
+        good.append("You feel in control of your energy usage daily.")
+    if responses["q9"] >= 4:
+        good.append("You are satisfied with your current energy management practices.")
+
+    # Areas for Improvement
     if responses["q1"] == "No":
-        insights.append("Work on understanding your natural energy highs and lows during the day.")
+        improvement.append("Work on understanding your natural energy highs and lows during the day.")
     if responses["q2"] < 3:
-        insights.append("Improve your ability to predict peak energy times by observing and journaling daily patterns.")
+        improvement.append("Improve your ability to predict peak energy times by observing and journaling daily patterns.")
     if responses["q3"].startswith("D"):
-        insights.append("Regularly track your energy levels to increase awareness.")
+        improvement.append("Regularly track your energy levels to increase awareness.")
     if responses["q4"] < 3:
-        insights.append("Consider scheduling demanding tasks during your peak energy hours for better productivity.")
+        improvement.append("Consider scheduling demanding tasks during your peak energy hours for better productivity.")
     if "C. Push through regardless." in responses["q5"] or "D. Delay tasks until later." in responses["q5"]:
-        insights.append("Adopt better strategies for low-energy periods, such as taking breaks or reprioritizing tasks.")
+        improvement.append("Adopt better strategies for low-energy periods, such as taking breaks or reprioritizing tasks.")
     if responses["q6"] == "No":
-        insights.append("Maintain a consistent sleep schedule to enhance energy optimization.")
+        improvement.append("Maintain a consistent sleep schedule to enhance energy optimization.")
     if responses["q7"] < 3:
-        insights.append("Schedule regular breaks during work hours to recharge and sustain productivity.")
+        improvement.append("Schedule regular breaks during work hours to recharge and sustain productivity.")
     if responses["q8"] == "No":
-        insights.append("Focus on techniques to feel more in control of your daily energy management.")
+        improvement.append("Focus on techniques to feel more in control of your daily energy management.")
     if responses["q9"] < 3:
-        insights.append("Work on improving your satisfaction with your energy management by refining routines.")
-    return insights
+        improvement.append("Work on improving your satisfaction with your energy management by refining routines.")
+
+    return good, improvement
+
 
 def display_analysis():
     st.title("📊 Awareness Analysis")
@@ -140,13 +169,23 @@ def display_analysis():
 
     # Display analysis
     st.subheader("📋 Analysis Results")
-    insights = analyze_responses(selected_response)
-    if insights:
-        st.markdown("**🔍 Areas for Improvement:**")
-        for i, insight in enumerate(insights, 1):
-            st.write(f"{i}. {insight}")
+    good, improvement = analyze_responses(selected_response)
+
+    # Strengths
+    st.markdown("#### ✅ What is Good")
+    if good:
+        for item in good:
+            st.write(f"- {item}")
     else:
-        st.success("🎉 Great job! No significant areas for improvement were identified.")
+        st.write("No significant strengths identified.")
+
+    # Areas for Improvement
+    st.markdown("#### 🔍 What Needs Improvement")
+    if improvement:
+        for item in improvement:
+            st.write(f"- {item}")
+    else:
+        st.success("No significant areas for improvement were identified.")
 
     # Display full response for context
     st.markdown("### 📄 Full Response Data")

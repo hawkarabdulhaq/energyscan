@@ -47,20 +47,30 @@ def load_existing_data():
 
 def classify_wellbeing(responses):
     """Classify well-being based on survey responses."""
+    response_scores = {
+        "q3": {
+            "A. Very consistent, I prioritize my physical well-being.": 4,
+            "B. Fairly consistent, but I occasionally slip.": 3,
+            "C. Inconsistent, I struggle to maintain a routine.": 2,
+            "D. Not consistent at all.": 1,
+        },
+        "q5": {
+            "Rarely, I manage my mental energy well.": 4,
+            "Occasionally, but it’s manageable.": 3,
+            "Frequently, it impacts my productivity.": 2,
+            "Almost always, I feel exhausted.": 1,
+        },
+    }
+
     score = 0
     score += 4 if responses["q1"] == "Yes" else 2
     score += 4 if responses["q2"] == "Yes" else 2
-    score += int(responses["q3"])  # Ensure q3 is an integer
+    score += response_scores["q3"].get(responses["q3"], 0)
     score += 4 if responses["q4"] == "Yes" else 2
-    score += {
-        "Rarely, I manage my mental energy well.": 4,
-        "Occasionally, but it’s manageable.": 3,
-        "Frequently, it impacts my productivity.": 2,
-        "Almost always, I feel exhausted.": 1,
-    }.get(responses["q5"], 0)  # Provide a default value
-    score += int(responses["q6"])  # Ensure q6 is an integer
-    score += len(responses.get("q7", [])) * 2  # Handle empty q7 gracefully
-    score += int(responses["q8"])  # Ensure q8 is an integer
+    score += response_scores["q5"].get(responses["q5"], 0)
+    score += int(responses["q6"])  # q6 is a numeric slider
+    score += len(responses.get("q7", [])) * 2  # Handle multiselect as list
+    score += int(responses["q8"])  # q8 is a numeric slider
     score += 4 if responses["q9"] == "Yes" else 2
 
     # Classify based on score
@@ -86,8 +96,8 @@ def analyze_responses(responses):
         good.append("You maintain a healthy balance between work and personal life.")
     if responses["q2"] == "Yes":
         good.append("You dedicate time daily for personal activities like hobbies or relaxation.")
-    if int(responses["q3"]) >= 4:
-        good.append("You are consistent in maintaining a healthy lifestyle (e.g., diet, exercise).")
+    if responses["q3"].startswith("A"):
+        good.append("You are very consistent in maintaining a healthy lifestyle.")
     if responses["q4"] == "Yes":
         good.append("You practice mindfulness or stress-relief techniques regularly.")
     if responses["q5"] == "Rarely, I manage my mental energy well.":
@@ -106,8 +116,8 @@ def analyze_responses(responses):
         improvement.append("Work on creating a healthier balance between work and personal life.")
     if responses["q2"] == "No":
         improvement.append("Dedicate time daily for personal activities like hobbies or relaxation.")
-    if int(responses["q3"]) < 3:
-        improvement.append("Focus on maintaining a more consistent healthy lifestyle (e.g., diet, exercise).")
+    if responses["q3"].startswith("D"):
+        improvement.append("Focus on maintaining a more consistent healthy lifestyle.")
     if responses["q4"] == "No":
         improvement.append("Incorporate mindfulness or stress-relief techniques into your routine.")
     if responses["q5"] in ["Frequently, it impacts my productivity.", "Almost always, I feel exhausted."]:
@@ -158,9 +168,9 @@ def display_wellbeing_analysis():
     score_categories = ["Work-Life Balance", "Healthy Lifestyle", "Social Connection", "Reflection"]
     scores = [
         4 if selected_response["q1"] == "Yes" else 2,
-        int(selected_response["q3"]),
         int(selected_response["q6"]),
-        int(selected_response["q8"])
+        len(selected_response.get("q7", [])) * 2,
+        int(selected_response["q8"]),
     ]
     fig = px.bar(x=score_categories, y=scores, labels={"x": "Category", "y": "Score"}, title="Score Distribution")
     st.plotly_chart(fig, use_container_width=True)

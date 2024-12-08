@@ -9,6 +9,7 @@ GITHUB_REPO = "energyscan"
 JSON_FILE = "data/routine.json"
 GITHUB_API_URL_JSON = f"https://api.github.com/repos/{GITHUB_USER}/{GITHUB_REPO}/contents/{JSON_FILE}"
 
+
 def get_github_pat():
     """Retrieve GitHub PAT from Streamlit secrets."""
     try:
@@ -89,12 +90,17 @@ def routine_test():
     # Initialize session state for responses
     if "routine_responses" not in st.session_state:
         st.session_state["routine_responses"] = {
-            "q1": None, "q2": None, "q3": 3, "q4": [], "q5": None, "q6": 3, "q7": None
+            "q1": None,
+            "q2": 3,
+            "q3": 3,
+            "q4": [],
+            "q5": None,
+            "q6": 3,
+            "q7": None,
         }
 
     # Section 1: Consistency in Habits
     st.subheader("1️⃣ Consistency in Habits")
-
     st.session_state["routine_responses"]["q1"] = st.radio(
         "Do you follow a structured daily routine?",
         ["Yes", "No"],
@@ -104,18 +110,19 @@ def routine_test():
 
     st.session_state["routine_responses"]["q2"] = st.slider(
         "How often do you stick to your daily schedule?",
-        min_value=1, max_value=5,
-        value=st.session_state["routine_responses"]["q2"] or 3,
+        min_value=1,
+        max_value=5,
+        value=st.session_state["routine_responses"]["q2"],
         format="Level %d",
         key="routine_q2"
     )
 
     # Section 2: Adaptability
     st.subheader("2️⃣ Adaptability Under Pressure")
-
     st.session_state["routine_responses"]["q3"] = st.slider(
         "How quickly do you adapt to unexpected changes in your routine?",
-        min_value=1, max_value=5,
+        min_value=1,
+        max_value=5,
         value=st.session_state["routine_responses"]["q3"],
         format="Level %d",
         key="routine_q3"
@@ -130,7 +137,6 @@ def routine_test():
 
     # Section 3: Self-Care Integration
     st.subheader("3️⃣ Self-Care Integration")
-
     st.session_state["routine_responses"]["q5"] = st.radio(
         "Do you intentionally allocate time for self-care (e.g., exercise, relaxation)?",
         ["Yes", "No"],
@@ -140,7 +146,8 @@ def routine_test():
 
     st.session_state["routine_responses"]["q6"] = st.slider(
         "How consistent are you in taking short breaks during work hours?",
-        min_value=1, max_value=5,
+        min_value=1,
+        max_value=5,
         value=st.session_state["routine_responses"]["q6"],
         format="Level %d",
         key="routine_q6"
@@ -148,7 +155,6 @@ def routine_test():
 
     # Section 4: Reflecting on Improvement
     st.subheader("4️⃣ Reflection and Improvement")
-
     st.session_state["routine_responses"]["q7"] = st.radio(
         "Do you review your routine regularly to improve its effectiveness?",
         ["Yes", "No"],

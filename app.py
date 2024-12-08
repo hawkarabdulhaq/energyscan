@@ -23,25 +23,15 @@ def home_page():
     
     # App Description
     st.markdown("""
-    I can diagnose your energy level by asking you the questions below. Your task is to carefully engage with my questions, and I will tell you what your performance level is.
+    🌟 **Discover Your Energy Performance**  
+    This test is designed to help you understand your energy patterns and performance levels.  
+    By answering carefully curated questions, you'll gain insights into:  
+    - How effectively you manage your energy.  
+    - Areas for improvement in your daily routines and habits.  
+    - Steps to enhance your productivity and well-being.  
+    
+    👉 Use the sidebar to navigate to the Questionary and start the journey to understanding your energy better!
     """)
-    
-    # User Details Form
-    st.subheader("📝 Please provide your details to get started:")
-    with st.form("user_details_form"):
-        name = st.text_input("Your Name")
-        age = st.number_input("Your Age", min_value=1, max_value=120, step=1)
-        gender = st.radio("Your Gender", ["Male", "Female", "Other"])
-        
-        # Submit Button
-        start_test = st.form_submit_button("Start Test")
-    
-    if start_test:
-        if name and age:
-            st.success(f"Hello {name}! You are ready to start the test. 🚀")
-            st.write("Use the sidebar to navigate to the Questionary and get started.")
-        else:
-            st.error("Please fill in all the fields to proceed.")
 
 def questionary_page():
     st.title("📋 Questionary Sections")

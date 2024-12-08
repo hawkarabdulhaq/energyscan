@@ -41,11 +41,44 @@ def load_existing_data():
         st.error(f"Failed to fetch data from GitHub. Error {response.status_code}: {response.text}")
         return []
 
+def classify_responses(responses):
+    """Classify the user's approach to task prioritization based on responses."""
+    score = 0
+
+    # Assign weights for each response
+    score += 4 if responses["q1"] == "Yes" else 2
+    score += responses["q2"]
+    score += {"A": 4, "B": 3, "C": 2, "D": 1}[responses["q3"][0]]
+    score += responses["q4"]
+    strategy_scores = {
+        "A. Adjust tasks to match energy levels.": 4,
+        "B. Take a short break or recharge.": 3,
+        "C. Push through regardless.": 2,
+        "D. Delay tasks until later.": 1
+    }
+    score += sum(strategy_scores[strategy] for strategy in responses["q5"])
+    score += 4 if responses["q6"] == "Yes" else 2
+    score += responses["q7"]
+    score += 4 if responses["q8"] == "Yes" else 2
+    score += responses["q9"]
+
+    # Classify based on score
+    if score >= 35:
+        classification = "Prioritizes essential, goal-oriented activities with clear impact."
+    elif 28 <= score < 35:
+        classification = "Focuses on impactful tasks most of the time but occasionally gets sidetracked."
+    elif 20 <= score < 28:
+        classification = "Mixes impactful and trivial tasks, leading to diluted results."
+    else:
+        classification = "Focuses primarily on low-value tasks; lacks clarity on priorities."
+
+    return classification, score
+
 def analyze_responses(responses):
     """Analyze individual responses and identify areas for improvement."""
     insights = []
     if responses["q1"] == "No":
-        insights.append("Understand your natural energy highs and lows during the day to enhance performance.")
+        insights.append("Work on understanding your natural energy highs and lows during the day.")
     if responses["q2"] < 3:
         insights.append("Improve your ability to predict peak energy times by observing and journaling daily patterns.")
     if responses["q3"].startswith("D"):
@@ -86,6 +119,12 @@ def display_analysis():
     )
     selected_response = data[selected_index]["responses"]
 
+    # Display classification
+    classification, total_score = classify_responses(selected_response)
+    st.subheader("📋 Classification Results")
+    st.write(f"**Classification:** {classification}")
+    st.write(f"**Total Score:** {total_score}/40")
+
     # Display analysis
     st.subheader("📋 Analysis Results")
     insights = analyze_responses(selected_response)
@@ -95,26 +134,6 @@ def display_analysis():
             st.write(f"{i}. {insight}")
     else:
         st.success("🎉 Great job! No significant areas for improvement were identified.")
-
-    # Display additional insights (e.g., scores)
-    st.markdown("### 📊 Additional Insights")
-    total_score = sum([
-        4 if selected_response["q1"] == "Yes" else 2,
-        selected_response["q2"],
-        {"A": 4, "B": 3, "C": 2, "D": 1}[selected_response["q3"][0]],
-        selected_response["q4"],
-        sum({
-            "A. Adjust tasks to match energy levels.": 4,
-            "B. Take a short break or recharge.": 3,
-            "C. Push through regardless.": 2,
-            "D. Delay tasks until later.": 1
-        }[strategy] for strategy in selected_response["q5"]),
-        4 if selected_response["q6"] == "Yes" else 2,
-        selected_response["q7"],
-        4 if selected_response["q8"] == "Yes" else 2,
-        selected_response["q9"]
-    ])
-    st.write(f"**Total Score:** {total_score}/40")
 
     # Display full response for context
     st.markdown("### 📄 Full Response Data")

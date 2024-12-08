@@ -1,4 +1,19 @@
 import streamlit as st
+import json
+import os
+
+def save_results_to_file(data, file_path="data/awareness.json"):
+    """Save results to a JSON file."""
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    if os.path.exists(file_path):
+        with open(file_path, "r") as file:
+            existing_data = json.load(file)
+    else:
+        existing_data = []
+    
+    existing_data.append(data)
+    with open(file_path, "w") as file:
+        json.dump(existing_data, file, indent=4)
 
 def awareness_test():
     st.title("Energy Awareness Test")
@@ -127,3 +142,21 @@ def awareness_test():
             st.warning("You are at a **Low Performance** level. Consider building better routines and tracking energy.")
         else:
             st.error("You are at a **Very Low Performance** level. Let's work on understanding your energy patterns.")
+        
+        # Save Results
+        user_data = {
+            "score": score,
+            "responses": {
+                "awareness_q1": q1,
+                "awareness_q2": q2,
+                "awareness_q3": q3,
+                "alignment_q4": q4,
+                "alignment_q5": q5,
+                "habits_q6": q6,
+                "habits_q7": q7,
+                "reflection_q8": q8,
+                "reflection_q9": q9
+            }
+        }
+        save_results_to_file(user_data)
+        st.success("Your results have been saved successfully!")

@@ -12,5 +12,24 @@
             "q8": 3,
             "q9": "No"
         }
+    },
+    {
+        "score": 30,
+        "responses": {
+            "q1": "No",
+            "q2": "No",
+            "q3": 3,
+            "q4": "No",
+            "q5": "Occasionally, but it\u2019s manageable.",
+            "q6": 5,
+            "q7": [
+                "B. Socializing with friends.",
+                "A. Weekly family meetups.",
+                "D. Online groups or chats.",
+                "C. Community or volunteering work."
+            ],
+            "q8": 3,
+            "q9": "No"
+        }
     }
 ]

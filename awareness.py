@@ -1,77 +1,34 @@
 import streamlit as st
 import json
-import requests
-import base64
+import os
 
-# Constants for GitHub integration
-GITHUB_USER = "habdulhaq87"
-GITHUB_REPO = "energyscan"
-JSON_FILE = "data/awareness.json"
-GITHUB_API_URL_JSON = f"https://api.github.com/repos/{GITHUB_USER}/{GITHUB_REPO}/contents/{JSON_FILE}"
+# Local file path
+LOCAL_FILE_PATH = "data/awareness.json"
 
-def get_github_pat():
-    """Retrieve GitHub PAT from Streamlit secrets or notify the user."""
-    try:
-        return st.secrets["github_pat"]
-    except KeyError:
-        st.error("GitHub PAT not found in secrets! Please add `github_pat` to your secrets.")
-        return None
+def ensure_directory_exists(file_path):
+    """Ensure the directory for the file exists."""
+    directory = os.path.dirname(file_path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
 def load_existing_data():
-    """Load existing data from the GitHub repository."""
-    github_pat = get_github_pat()
-    if not github_pat:
-        return []
-
-    headers = {"Authorization": f"token {github_pat}"}
-    response = requests.get(GITHUB_API_URL_JSON, headers=headers)
-    
-    if response.status_code == 200:
-        content = response.json().get("content", "")
-        if content:
-            return json.loads(base64.b64decode(content).decode("utf-8"))
-    elif response.status_code == 404:
-        st.warning("No existing data found. A new file will be created.")
-        return []
+    """Load existing data from the local file."""
+    ensure_directory_exists(LOCAL_FILE_PATH)
+    if os.path.exists(LOCAL_FILE_PATH):
+        with open(LOCAL_FILE_PATH, "r") as file:
+            return json.load(file)
     else:
-        st.error(f"Failed to load existing data. Error {response.status_code}: {response.text}")
         return []
 
-def save_results_to_github(data):
-    """Save results to the GitHub repository."""
-    github_pat = get_github_pat()
-    if not github_pat:
-        return
-
+def save_results_to_local(data):
+    """Save results to a local JSON file."""
+    ensure_directory_exists(LOCAL_FILE_PATH)
     existing_data = load_existing_data()
     existing_data.append(data)
-
-    headers = {
-        "Authorization": f"token {github_pat}",
-        "Accept": "application/vnd.github.v3+json",
-    }
-
-    # Prepare payload
-    encoded_content = base64.b64encode(json.dumps(existing_data, indent=4).encode("utf-8")).decode("utf-8")
-    commit_message = "Update awareness.json with new responses"
-
-    # Get the SHA of the existing file if it exists
-    sha = None
-    response = requests.get(GITHUB_API_URL_JSON, headers=headers)
-    if response.status_code == 200:
-        sha = response.json().get("sha", None)
-
-    payload = {"message": commit_message, "content": encoded_content}
-    if sha:
-        payload["sha"] = sha
-
-    # Save the updated file
-    save_response = requests.put(GITHUB_API_URL_JSON, headers=headers, json=payload)
-
-    if save_response.status_code in [200, 201]:
-        st.success("Results successfully saved to GitHub!")
-    else:
-        st.error(f"Failed to save results to GitHub. Error {save_response.status_code}: {save_response.text}")
+    
+    with open(LOCAL_FILE_PATH, "w") as file:
+        json.dump(existing_data, file, indent=4)
+    st.success("Your results have been saved successfully!")
 
 def awareness_test():
     st.title("Energy Awareness Test")
@@ -200,5 +157,4 @@ def awareness_test():
         score += 4 if responses["q8"] == "Yes" else 2
         score += responses["q9"]
 
-        save_results_to_github({"score": score, "responses": responses})
-        st.success("Your results have been saved successfully!")
+        save_results_to_local({"score": score, "responses": responses})

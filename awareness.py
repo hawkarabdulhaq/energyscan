@@ -126,9 +126,8 @@ def awareness_test():
         key="reflection_q9"
     )
 
-    # Submit Test
+    # Submit Test Button
     if st.button("Submit Test"):
-        st.subheader("Your Results")
         responses = st.session_state["awareness_responses"]
         score = 0
         score += 4 if responses["q1"] == "Yes" else 2
@@ -144,16 +143,6 @@ def awareness_test():
         score += responses["q7"]
         score += 4 if responses["q8"] == "Yes" else 2
         score += responses["q9"]
-
-        st.write(f"**Your Total Score: {score}**")
-        if score >= 36:
-            st.success("You are at the **Peak Performance** level. Keep up the excellent energy management!")
-        elif 24 <= score < 36:
-            st.info("You are at a **Moderate Performance** level. Focus on consistency to improve further.")
-        elif 12 <= score < 24:
-            st.warning("You are at a **Low Performance** level. Consider building better routines and tracking energy.")
-        else:
-            st.error("You are at a **Very Low Performance** level. Let's work on understanding your energy patterns.")
 
         # Save Results
         save_results_to_file({"score": score, "responses": responses})

@@ -10,42 +10,19 @@ JSON_FILE = "data/awareness.json"
 GITHUB_API_URL_JSON = f"https://api.github.com/repos/{GITHUB_USER}/{GITHUB_REPO}/contents/{JSON_FILE}"
 
 def get_github_pat():
-    """Retrieve GitHub PAT from Streamlit secrets or notify the user."""
+    """Retrieve GitHub PAT from Streamlit secrets."""
     try:
         return st.secrets["github_pat"]
     except KeyError:
         st.error("GitHub PAT not found in secrets! Please add `github_pat` to your secrets.")
         return None
 
-def ensure_directory_exists():
-    """Ensure the directory exists in the GitHub repository."""
-    github_pat = get_github_pat()
-    if not github_pat:
-        return False
-
-    directory_url = GITHUB_API_URL_JSON.rsplit('/', 1)[0]  # Directory URL
-    headers = {"Authorization": f"token {github_pat}"}
-    response = requests.get(directory_url, headers=headers)
-    
-    st.write("Debug: Checking directory existence at", directory_url)  # Debugging line
-    st.write("Debug: Response status code", response.status_code)  # Debugging line
-
-    if response.status_code == 404:
-        st.warning("The `data` directory does not exist in the repository. Create it manually.")
-        return False
-    elif response.status_code != 200:
-        st.error(f"Error checking directory existence: {response.status_code}")
-        st.write("Debug: Response details", response.text)  # Debugging line
-        return False
-    st.success("Directory `data` exists in the repository.")
-    return True
-
 def load_existing_data():
     """Load existing data from the GitHub repository."""
-    if not ensure_directory_exists():
+    github_pat = get_github_pat()
+    if not github_pat:
         return []
 
-    github_pat = get_github_pat()
     headers = {"Authorization": f"token {github_pat}"}
     response = requests.get(GITHUB_API_URL_JSON, headers=headers)
     
@@ -61,10 +38,7 @@ def load_existing_data():
         return []
 
 def save_results_to_github(data):
-    """Save results to the GitHub repository."""
-    if not ensure_directory_exists():
-        return
-
+    """Save results directly to the GitHub repository."""
     github_pat = get_github_pat()
     if not github_pat:
         return
@@ -98,9 +72,7 @@ def save_results_to_github(data):
         st.success("Results successfully saved to GitHub!")
     else:
         st.error(f"Failed to save results to GitHub. Error {save_response.status_code}: {save_response.text}")
-        st.write("Debug: Response details", save_response.text)  # Debugging line
 
-# Awareness Test
 def awareness_test():
     st.title("Energy Awareness Test")
     st.markdown("**Answer the following questions to assess your energy performance level.**")
@@ -119,13 +91,114 @@ def awareness_test():
             "q9": 3
         }
 
-    # Questions ...
-    # (Include all test questions as in the original script)
+    # Section 1: Awareness
+    st.subheader("Section 1: Awareness")
+    st.session_state["awareness_responses"]["q1"] = st.radio(
+        "Do you feel you understand your natural energy highs and lows during the day?",
+        ["Yes", "No"],
+        index=0 if st.session_state["awareness_responses"]["q1"] == "Yes" else 1,
+        key="awareness_q1"
+    )
+
+    st.session_state["awareness_responses"]["q2"] = st.slider(
+        "How well can you predict your peak energy times during the day?",
+        min_value=1,
+        max_value=5,
+        value=st.session_state["awareness_responses"]["q2"],
+        format="Level %d",
+        key="awareness_q2"
+    )
+
+    st.session_state["awareness_responses"]["q3"] = st.radio(
+        "How do you become aware of your energy levels?",
+        [
+            "A. Through regular tracking or journaling.",
+            "B. Occasionally reflect on energy levels.",
+            "C. Only notice during extreme highs/lows.",
+            "D. Rarely think about energy levels."
+        ],
+        index={
+            "A": 0, "B": 1, "C": 2, "D": 3
+        }[st.session_state["awareness_responses"]["q3"][0]] if st.session_state["awareness_responses"]["q3"] else 0,
+        key="awareness_q3"
+    )
+
+    # Section 2: Task Alignment
+    st.subheader("Section 2: Task Alignment")
+    st.session_state["awareness_responses"]["q4"] = st.slider(
+        "How often do you schedule demanding tasks during your peak energy hours?",
+        min_value=1,
+        max_value=5,
+        value=st.session_state["awareness_responses"]["q4"],
+        format="Level %d",
+        key="awareness_q4"
+    )
+
+    st.session_state["awareness_responses"]["q5"] = st.multiselect(
+        "What strategies do you use to handle tasks during low energy periods?",
+        [
+            "A. Adjust tasks to match energy levels.",
+            "B. Take a short break or recharge.",
+            "C. Push through regardless.",
+            "D. Delay tasks until later."
+        ],
+        default=st.session_state["awareness_responses"]["q5"],
+        key="awareness_q5"
+    )
+
+    # Section 3: Consistency and Habits
+    st.subheader("Section 3: Consistency and Habits")
+    st.session_state["awareness_responses"]["q6"] = st.radio(
+        "Do you maintain a consistent sleep schedule to optimize energy usage?",
+        ["Yes", "No"],
+        index=0 if st.session_state["awareness_responses"]["q6"] == "Yes" else 1,
+        key="habits_q6"
+    )
+
+    st.session_state["awareness_responses"]["q7"] = st.slider(
+        "How consistent are you in taking regular breaks during work hours?",
+        min_value=1,
+        max_value=5,
+        value=st.session_state["awareness_responses"]["q7"],
+        format="Level %d",
+        key="habits_q7"
+    )
+
+    # Section 4: Self-Reflection
+    st.subheader("Section 4: Self-Reflection")
+    st.session_state["awareness_responses"]["q8"] = st.radio(
+        "Do you feel in control of your energy usage daily?",
+        ["Yes", "No"],
+        index=0 if st.session_state["awareness_responses"]["q8"] == "Yes" else 1,
+        key="reflection_q8"
+    )
+
+    st.session_state["awareness_responses"]["q9"] = st.slider(
+        "How satisfied are you with your current energy management?",
+        min_value=1,
+        max_value=5,
+        value=st.session_state["awareness_responses"]["q9"],
+        format="Level %d",
+        key="reflection_q9"
+    )
 
     # Submit Test
     if st.button("Submit Test"):
         responses = st.session_state["awareness_responses"]
         score = 0
-        # Calculate the score ...
+        score += 4 if responses["q1"] == "Yes" else 2
+        score += responses["q2"]
+        score += {"A": 4, "B": 3, "C": 2, "D": 1}[responses["q3"][0]]
+        score += responses["q4"]
+        strategy_scores = {"A. Adjust tasks to match energy levels.": 4, 
+                           "B. Take a short break or recharge.": 3, 
+                           "C. Push through regardless.": 2, 
+                           "D. Delay tasks until later.": 1}
+        score += sum(strategy_scores[strategy] for strategy in responses["q5"])
+        score += 4 if responses["q6"] == "Yes" else 2
+        score += responses["q7"]
+        score += 4 if responses["q8"] == "Yes" else 2
+        score += responses["q9"]
+
         save_results_to_github({"score": score, "responses": responses})
         st.success("Your results have been saved successfully!")

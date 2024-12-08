@@ -46,7 +46,7 @@ def home_page():
     
     👉 Use the sidebar to navigate to the Survey, Analysis, or Results sections and start your journey to optimizing energy performance!
     """)
-      st.image("assets/personal.jpg", use_container_width=True)
+    st.image("assets/personal.jpg", use_container_width=True)
 
 # Initialize Session State for Page Navigation
 if "current_page" not in st.session_state:

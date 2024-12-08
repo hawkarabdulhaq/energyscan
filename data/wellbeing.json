@@ -53,5 +53,19 @@
             "q8": 3,
             "q9": "No"
         }
+    },
+    {
+        "score": 21,
+        "responses": {
+            "q1": "No",
+            "q2": "No",
+            "q3": 3,
+            "q4": "No",
+            "q5": "Rarely, I manage my mental energy well.",
+            "q6": 3,
+            "q7": [],
+            "q8": 3,
+            "q9": "No"
+        }
     }
 ]

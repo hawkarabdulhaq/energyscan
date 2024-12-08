@@ -5,10 +5,13 @@ import os
 
 def save_results_to_file(data, file_path="data/awareness.json"):
     """Save results to a JSON file."""
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)  # Ensure the directory exists
     if os.path.exists(file_path):
         with open(file_path, "r") as file:
-            existing_data = json.load(file)
+            try:
+                existing_data = json.load(file)
+            except json.JSONDecodeError:
+                existing_data = []
     else:
         existing_data = []
     
@@ -136,14 +139,4 @@ def awareness_test():
         score += responses["q4"]
         strategy_scores = {"A. Adjust tasks to match energy levels.": 4, 
                            "B. Take a short break or recharge.": 3, 
-                           "C. Push through regardless.": 2, 
-                           "D. Delay tasks until later.": 1}
-        score += sum(strategy_scores[strategy] for strategy in responses["q5"])
-        score += 4 if responses["q6"] == "Yes" else 2
-        score += responses["q7"]
-        score += 4 if responses["q8"] == "Yes" else 2
-        score += responses["q9"]
-
-        # Save Results
-        save_results_to_file({"score": score, "responses": responses})
-        st.success("Your results have been saved successfully!")
+                          

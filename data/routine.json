@@ -34,5 +34,20 @@
             "q6": 3,
             "q7": "No"
         }
+    },
+    {
+        "score": 24,
+        "responses": {
+            "q1": "No",
+            "q2": 3,
+            "q3": 4,
+            "q4": [
+                "A. Prioritize tasks.",
+                "D. Skip low-priority tasks."
+            ],
+            "q5": "No",
+            "q6": 4,
+            "q7": "Yes"
+        }
     }
 ]

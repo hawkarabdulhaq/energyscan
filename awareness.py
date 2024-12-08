@@ -4,18 +4,20 @@ import requests
 import base64
 
 # Constants for GitHub integration
-GITHUB_USER = "hawkarabdulhaq"
+GITHUB_USER = "habdulhaq87"
 GITHUB_REPO = "energyscan"
 JSON_FILE = "data/awareness.json"
 GITHUB_API_URL_JSON = f"https://api.github.com/repos/{GITHUB_USER}/{GITHUB_REPO}/contents/{JSON_FILE}"
 
+
 def get_github_pat():
-    """Retrieve GitHub PAT from Streamlit secrets or notify the user."""
+    """Retrieve GitHub PAT from Streamlit secrets."""
     try:
         return st.secrets["github_pat"]
     except KeyError:
         st.error("GitHub PAT not found in secrets! Please add `github_pat` to your secrets.")
         return None
+
 
 def load_existing_data():
     """Load existing data from the GitHub repository."""
@@ -25,20 +27,25 @@ def load_existing_data():
 
     headers = {"Authorization": f"token {github_pat}"}
     response = requests.get(GITHUB_API_URL_JSON, headers=headers)
-    
+
     if response.status_code == 200:
         content = response.json().get("content", "")
         if content:
-            return json.loads(base64.b64decode(content).decode("utf-8"))
+            try:
+                return json.loads(base64.b64decode(content).decode("utf-8"))
+            except json.JSONDecodeError:
+                st.error("Failed to decode existing data. Initializing as an empty list.")
+                return []
     elif response.status_code == 404:
         st.warning("No existing data found. A new file will be created.")
         return []
     else:
-        st.error(f"Failed to load existing data. Error {response.status_code}: {response.text}")
+        st.error(f"Failed to fetch data from GitHub. Error {response.status_code}: {response.text}")
         return []
 
+
 def save_results_to_github(data):
-    """Save results to the GitHub repository."""
+    """Save or update data in the GitHub repository."""
     github_pat = get_github_pat()
     if not github_pat:
         return
@@ -51,11 +58,11 @@ def save_results_to_github(data):
         "Accept": "application/vnd.github.v3+json",
     }
 
-    # Prepare payload
+    # Encode content and prepare payload
     encoded_content = base64.b64encode(json.dumps(existing_data, indent=4).encode("utf-8")).decode("utf-8")
     commit_message = "Update awareness.json with new responses"
 
-    # Get the SHA of the existing file if it exists
+    # Get the SHA of the existing file (if exists)
     sha = None
     response = requests.get(GITHUB_API_URL_JSON, headers=headers)
     if response.status_code == 200:
@@ -72,6 +79,7 @@ def save_results_to_github(data):
         st.success("Results successfully saved to GitHub!")
     else:
         st.error(f"Failed to save results to GitHub. Error {save_response.status_code}: {save_response.text}")
+
 
 def awareness_test():
     st.title("Energy Awareness Test")

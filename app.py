@@ -2,32 +2,44 @@ import streamlit as st
 from survey import display_questionary
 
 def main():
-    # Sidebar Navigation
-    st.sidebar.title("Navigation")
-    menu = st.sidebar.radio(
-        "Choose a Section",
-        ["Home", "Questionary"]
+    # App Configuration
+    st.set_page_config(
+        page_title="Energy Performance Lab",
+        page_icon="⚡",
+        layout="wide",
     )
     
-    if menu == "Home":
+    # Sidebar Navigation
+    st.sidebar.title("⚡ Energy Performance Lab")
+    st.sidebar.markdown("---")
+    
+    st.sidebar.subheader("Navigation")
+    if st.sidebar.button("🏠 Home"):
         home_page()
-    elif menu == "Questionary":
-        display_questionary()
+    if st.sidebar.button("📋 Awareness"):
+        display_questionary(section="Awareness")
+    if st.sidebar.button("📋 Routine"):
+        display_questionary(section="Routine")
+    if st.sidebar.button("📋 Well-being"):
+        display_questionary(section="Well-being")
+    if st.sidebar.button("📋 Activities"):
+        display_questionary(section="Activities")
+    
+    st.sidebar.markdown("---")
+    st.sidebar.write("✨ Discover your energy potential!")
 
 def home_page():
-    # App Title
+    # Home Page Content
     st.title("Welcome to Scan Your Energy Performance Lab")
-    
-    # App Description
     st.markdown("""
     🌟 **Discover Your Energy Performance**  
-    This test is designed to help you understand your energy patterns and performance levels.  
-    By answering carefully curated questions, you'll gain insights into:  
-    - How effectively you manage your energy.  
-    - Areas for improvement in your daily routines and habits.  
-    - Steps to enhance your productivity and well-being.  
+    Unlock insights into your energy management and performance levels with our personalized questionary.  
+    - **Awareness**: Understand your peak energy times and patterns.  
+    - **Routine**: Build effective, resilient routines.  
+    - **Well-being**: Achieve balance in life and work.  
+    - **Activities**: Prioritize tasks for maximum impact.  
     
-    👉 Use the sidebar to navigate to the Questionary and start the journey to understanding your energy better!
+    🖱️ Use the buttons in the sidebar to explore each section of the questionary and start your journey!
     """)
 
 if __name__ == "__main__":

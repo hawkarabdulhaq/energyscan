@@ -4,7 +4,7 @@ import requests
 import base64
 
 # GitHub Repository Details
-GITHUB_USER = "habdulhaq87"
+GITHUB_USER = "hawkarabdulhaq"
 GITHUB_REPO = "energyscan"
 GITHUB_PAT = st.secrets["github_pat"]  # GitHub Personal Access Token
 FILE_PATH = "data/awareness.json"

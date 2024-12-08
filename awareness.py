@@ -8,8 +8,9 @@ GITHUB_USER = "habdulhaq87"
 GITHUB_REPO = "energyscan"
 GITHUB_PAT = st.secrets["github_pat"]
 
-JSON_FILE = "awareness.json"
-GITHUB_API_URL_JSON = f"https://api.github.com/repos/{GITHUB_USER}/{GITHUB_REPO}/contents/data/{JSON_FILE}"
+# GitHub API URL for the awareness.json file
+JSON_FILE = "data/awareness.json"
+GITHUB_API_URL_JSON = f"https://api.github.com/repos/{GITHUB_USER}/{GITHUB_REPO}/contents/{JSON_FILE}"
 
 
 def load_existing_data():

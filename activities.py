@@ -91,14 +91,13 @@ def activities_test():
     # Initialize session state for responses
     if "activities_responses" not in st.session_state:
         st.session_state["activities_responses"] = {
-            "q1": None,
-            "q2": None,
+            "q1": "Always",
+            "q2": False,
             "q3": 3,
-            "q4": None,
-            "q5": None,
-            "q6": [],
-            "q7": None,
-            "q8": 3,
+            "q4": "Yes",
+            "q5": [],
+            "q6": "Always",
+            "q7": 3,
         }
 
     # Section 1: Task Prioritization
@@ -106,15 +105,13 @@ def activities_test():
     st.session_state["activities_responses"]["q1"] = st.radio(
         "How often do you prioritize tasks based on their importance?",
         ["Always", "Often", "Rarely", "Never"],
-        index={
-            "Always": 0, "Often": 1, "Rarely": 2, "Never": 3,
-        }.get(st.session_state["activities_responses"]["q1"], 0),
+        index=["Always", "Often", "Rarely", "Never"].index(st.session_state["activities_responses"]["q1"]),
         key="activities_q1"
     )
 
     st.session_state["activities_responses"]["q2"] = st.checkbox(
         "Do you create a to-do list every morning to organize your day?",
-        value=st.session_state["activities_responses"]["q2"] or False,
+        value=st.session_state["activities_responses"]["q2"],
         key="activities_q2"
     )
 
@@ -150,21 +147,12 @@ def activities_test():
         key="activities_q5"
     )
 
-    strategy_scores = {
-        "Write down expected outcomes for each task.": 4,
-        "Compare task outcomes with goals.": 3,
-        "Use a decision-making framework.": 2,
-        "Complete tasks randomly without evaluation.": 1,
-    }
-
     # Section 4: Productivity and Focus
     st.subheader("4️⃣ Productivity and Focus")
     st.session_state["activities_responses"]["q6"] = st.radio(
         "When working on high-priority tasks, how often do you eliminate distractions?",
         ["Always", "Often", "Rarely", "Never"],
-        index={
-            "Always": 0, "Often": 1, "Rarely": 2, "Never": 3,
-        }.get(st.session_state["activities_responses"]["q6"], 0),
+        index=["Always", "Often", "Rarely", "Never"].index(st.session_state["activities_responses"]["q6"]),
         key="activities_q6"
     )
 
@@ -172,7 +160,7 @@ def activities_test():
         "How frequently do you review your goals and progress?",
         min_value=1,
         max_value=5,
-        value=st.session_state["activities_responses"]["q7"] or 3,
+        value=st.session_state["activities_responses"]["q7"],
         format="Level %d",
         key="activities_q7"
     )
@@ -185,7 +173,10 @@ def activities_test():
         score += 4 if responses["q2"] else 2
         score += responses["q3"]
         score += 4 if responses["q4"] == "Yes" else 2
-        score += sum(strategy_scores.get(strategy, 0) for strategy in responses["q5"])
+        score += sum([4, 3, 2, 1][["Write down expected outcomes for each task.",
+                                   "Compare task outcomes with goals.",
+                                   "Use a decision-making framework.",
+                                   "Complete tasks randomly without evaluation."].index(strategy)] for strategy in responses["q5"])
         score += 4 if responses["q6"] == "Always" else 3 if responses["q6"] == "Often" else 2 if responses["q6"] == "Rarely" else 1
         score += responses["q7"]
 

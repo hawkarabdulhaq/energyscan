@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import json
 import base64
+import plotly.express as px
 
 # Constants for GitHub integration
 GITHUB_USER = "hawkarabdulhaq"
@@ -64,13 +65,13 @@ def classify_responses(responses):
 
     # Classify based on score
     if score >= 35:
-        classification = "Prioritizes essential, goal-oriented activities with clear impact."
+        classification = "🎯 Prioritizes essential, goal-oriented activities with clear impact."
     elif 28 <= score < 35:
-        classification = "Focuses on impactful tasks most of the time but occasionally gets sidetracked."
+        classification = "✅ Focuses on impactful tasks most of the time but occasionally gets sidetracked."
     elif 20 <= score < 28:
-        classification = "Mixes impactful and trivial tasks, leading to diluted results."
+        classification = "⚠️ Mixes impactful and trivial tasks, leading to diluted results."
     else:
-        classification = "Focuses primarily on low-value tasks; lacks clarity on priorities."
+        classification = "❌ Focuses primarily on low-value tasks; lacks clarity on priorities."
 
     return classification, score
 
@@ -122,8 +123,20 @@ def display_analysis():
     # Display classification
     classification, total_score = classify_responses(selected_response)
     st.subheader("📋 Classification Results")
-    st.write(f"**Classification:** {classification}")
-    st.write(f"**Total Score:** {total_score}/40")
+    st.info(f"**Classification:** {classification}")
+    st.metric("Total Score", f"{total_score}/40")
+
+    # Visualization of Score Distribution
+    st.markdown("### 📊 Score Distribution")
+    score_categories = ["Energy Awareness", "Task Alignment", "Consistency", "Self-Reflection"]
+    scores = [
+        selected_response["q2"] + {"A": 4, "B": 3, "C": 2, "D": 1}[selected_response["q3"][0]],
+        selected_response["q4"],
+        selected_response["q7"],
+        selected_response["q9"]
+    ]
+    fig = px.bar(x=score_categories, y=scores, labels={"x": "Category", "y": "Score"}, title="Score Distribution")
+    st.plotly_chart(fig, use_container_width=True)
 
     # Display analysis
     st.subheader("📋 Analysis Results")

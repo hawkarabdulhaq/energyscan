@@ -19,8 +19,8 @@ def load_existing_data():
             with open(LOCAL_FILE_PATH, "r") as file:
                 data = json.load(file)
                 return data if isinstance(data, list) else []
-        except (json.JSONDecodeError, ValueError):
-            # Handle empty or invalid JSON
+        except (json.JSONDecodeError, ValueError) as e:
+            st.error(f"Error reading existing data: {e}")
             return []
     else:
         return []
@@ -30,9 +30,12 @@ def save_results_to_local(data):
     ensure_directory_exists(LOCAL_FILE_PATH)
     existing_data = load_existing_data()
     existing_data.append(data)
-    with open(LOCAL_FILE_PATH, "w") as file:
-        json.dump(existing_data, file, indent=4)
-    st.success("Your results have been saved successfully!")
+    try:
+        with open(LOCAL_FILE_PATH, "w") as file:
+            json.dump(existing_data, file, indent=4)
+        st.success("Your results have been saved successfully!")
+    except Exception as e:
+        st.error(f"Failed to save data: {e}")
 
 def awareness_test():
     st.title("Energy Awareness Test")

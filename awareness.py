@@ -17,12 +17,30 @@ def get_github_pat():
         st.error("GitHub PAT not found in secrets! Please add `github_pat` to your secrets.")
         return None
 
-def load_existing_data():
-    """Load existing data from the GitHub repository."""
+def ensure_directory_exists():
+    """Ensure the directory exists in the GitHub repository."""
     github_pat = get_github_pat()
     if not github_pat:
+        return False
+
+    # Check if the directory exists
+    directory_url = GITHUB_API_URL_JSON.rsplit('/', 1)[0]  # Directory URL
+    headers = {"Authorization": f"token {github_pat}"}
+    response = requests.get(directory_url, headers=headers)
+    if response.status_code == 404:
+        st.warning("The `data` directory does not exist in the repository. Create it manually.")
+        return False
+    elif response.status_code != 200:
+        st.error(f"Error checking directory existence: {response.status_code}")
+        return False
+    return True
+
+def load_existing_data():
+    """Load existing data from the GitHub repository."""
+    if not ensure_directory_exists():
         return []
 
+    github_pat = get_github_pat()
     headers = {"Authorization": f"token {github_pat}"}
     response = requests.get(GITHUB_API_URL_JSON, headers=headers)
     
@@ -39,6 +57,9 @@ def load_existing_data():
 
 def save_results_to_github(data):
     """Save results to the GitHub repository."""
+    if not ensure_directory_exists():
+        return
+
     github_pat = get_github_pat()
     if not github_pat:
         return
@@ -200,6 +221,5 @@ def awareness_test():
         score += 4 if responses["q8"] == "Yes" else 2
         score += responses["q9"]
 
-        # Save Results
         save_results_to_github({"score": score, "responses": responses})
         st.success("Your results have been saved successfully!")

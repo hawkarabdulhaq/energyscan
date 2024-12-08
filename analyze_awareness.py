@@ -186,7 +186,3 @@ def display_analysis():
             st.write(f"- {item}")
     else:
         st.success("No significant areas for improvement were identified.")
-
-    # Display full response for context
-    st.markdown("### 📄 Full Response Data")
-    st.json(selected_response)

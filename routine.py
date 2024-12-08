@@ -2,6 +2,11 @@ import streamlit as st
 
 def routine_test():
     st.title("🛠️ Routine Test")
+    st.markdown("""
+    **Evaluate your consistency, resilience, adaptability, and self-care in daily routines.**
+    """)
+    
+    # Initialize score
     score = 0
 
     # Question 1
@@ -12,7 +17,7 @@ def routine_test():
          "B. Fairly consistent, but I occasionally skip.",
          "C. Inconsistent, I struggle to maintain routines.",
          "D. Not consistent at all."],
-        key="q1"
+        key="routine_q1"
     )
     score += {"A": 4, "B": 3, "C": 2, "D": 1}[q1[0]]
 
@@ -23,7 +28,7 @@ def routine_test():
          "B. Occasionally, when I feel the need for improvement.",
          "C. Rarely, I resist changing routines.",
          "D. Never, I stick to the same habits regardless of outcomes."],
-        key="q2"
+        key="routine_q2"
     )
     score += {"A": 4, "B": 3, "C": 2, "D": 1}[q2[0]]
 
@@ -35,7 +40,7 @@ def routine_test():
          "B. I adapt eventually but feel stressed initially.",
          "C. I struggle to find my footing and often feel overwhelmed.",
          "D. I avoid addressing challenges and feel stuck."],
-        key="q3"
+        key="routine_q3"
     )
     score += {"A": 4, "B": 3, "C": 2, "D": 1}[q3[0]]
 
@@ -46,7 +51,7 @@ def routine_test():
          "B. I recover eventually but dwell on the setback for some time.",
          "C. I find it difficult to recover and lose momentum.",
          "D. I often abandon goals after setbacks."],
-        key="q4"
+        key="routine_q4"
     )
     score += {"A": 4, "B": 3, "C": 2, "D": 1}[q4[0]]
 

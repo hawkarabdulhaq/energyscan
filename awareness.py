@@ -2,7 +2,7 @@ import streamlit as st
 import json
 import os
 
-# Local file path
+# Local file path for the JSON
 LOCAL_FILE_PATH = "data/awareness.json"
 
 def ensure_directory_exists(file_path):
@@ -15,8 +15,13 @@ def load_existing_data():
     """Load existing data from the local file."""
     ensure_directory_exists(LOCAL_FILE_PATH)
     if os.path.exists(LOCAL_FILE_PATH):
-        with open(LOCAL_FILE_PATH, "r") as file:
-            return json.load(file)
+        try:
+            with open(LOCAL_FILE_PATH, "r") as file:
+                data = json.load(file)
+                return data if isinstance(data, list) else []
+        except (json.JSONDecodeError, ValueError):
+            # Handle empty or invalid JSON
+            return []
     else:
         return []
 
@@ -25,7 +30,6 @@ def save_results_to_local(data):
     ensure_directory_exists(LOCAL_FILE_PATH)
     existing_data = load_existing_data()
     existing_data.append(data)
-    
     with open(LOCAL_FILE_PATH, "w") as file:
         json.dump(existing_data, file, indent=4)
     st.success("Your results have been saved successfully!")

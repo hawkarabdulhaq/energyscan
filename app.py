@@ -11,7 +11,7 @@ def main():
     st.sidebar.title(APP_NAME)
     st.sidebar.markdown("---")
 
-    # Sidebar Buttons for Navigation
+    # Sidebar Navigation with Buttons
     if st.sidebar.button("🏠 Home"):
         st.session_state["current_page"] = "Home"
     if st.sidebar.button("📋 Survey"):
@@ -21,6 +21,12 @@ def main():
     if st.sidebar.button("📈 Results"):
         st.session_state["current_page"] = "Results"
 
+    # Sidebar Footer
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### Course by Hawkar Ali Abdulhaq")
+    st.sidebar.markdown("🌐 [www.habdulhaq.com](https://www.habdulhaq.com)")
+    st.sidebar.markdown("📧 [connect@habdulhaq.com](mailto:connect@habdulhaq.com)")
+    
     # Render the selected page
     if st.session_state["current_page"] == "Home":
         home_page()
@@ -46,7 +52,11 @@ def home_page():
     
     👉 Use the sidebar to navigate to the Survey, Analysis, or Results sections and start your journey to optimizing energy performance!
     """)
-    st.image("data/personal.jpg", use_container_width=True)
+    st.markdown("---")
+    st.markdown("**Course by Hawkar Ali Abdulhaq**")
+    st.markdown("🌐 [www.habdulhaq.com](https://www.habdulhaq.com)")
+    st.markdown("📧 [connect@habdulhaq.com](mailto:connect@habdulhaq.com)")
+    st.image("https://via.placeholder.com/800x200?text=Maximize+Your+Potential", use_container_width=True)
 
 # Initialize Session State for Page Navigation
 if "current_page" not in st.session_state:
